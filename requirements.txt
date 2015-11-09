@@ -1,2 +1,5 @@
 Flask
 eve
+pymongo==2.8
+pytest
+requests
