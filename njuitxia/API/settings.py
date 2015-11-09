@@ -57,7 +57,7 @@ order_schema = {
     },
     'status': {
         'type': 'integer',
-        'allowed': [0, 1, -1], # 0: 等待处理，1: 正在处理，-1: 处理完成。
+        'allowed': [0, 1, -1],  # 0: 等待处理，1: 正在处理，-1: 处理完成。
         'default': 0,
     },
     'comments': {

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import requests
 import json
+import requests
 
 API_URL = 'http://localhost:5000/'
 
@@ -24,5 +24,5 @@ def test_post_orders():
         "description": "description",
         "machine_model": "MacBook Pro with Retina Display",
         "campus": "gulou",
-        }
+    }
     assert requests.post(url, json=data).status_code == 201
