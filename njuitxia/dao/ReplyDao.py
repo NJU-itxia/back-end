@@ -7,14 +7,16 @@ Created on 2015-1-7
 @author: LC
 '''
 
-import web
-from config.setting import mydb
+
+from config.setting import cur,conn
 
 def getReply(orderid):
     result = []
     try:
-        knightReply = mydb.query("SELECT `index`, `replybool`, `orderid`, `itxiaid`, `time`, `content`, `account` as `name` FROM `reply` JOIN `members` WHERE `itxiaid`=`id` AND `orderid`='$orderid' AND `replybool`='1' ORDER BY `reply`.`index` ASC", vars=locals())
-        helperReply = mydb.query("SELECT `index`, `replybool`, `orderid`, `itxiaid`, `time`, `content` FROM `reply` WHERE `orderid`='$orderid' AND `replybool`='0' ORDER BY `reply`.`index` ASC", vars=locals())
+        cur.execute("SELECT `index`, `replybool`, `orderid`, `itxiaid`, `time`, `content`, `account` as `name` FROM `reply` JOIN `members` WHERE `itxiaid`=`id` AND `orderid`='"+str(orderid)+"' AND `replybool`='1' ORDER BY `reply`.`index` ASC")
+        knightReply = cur.fetchall()
+        cur.execute("SELECT `index`, `replybool`, `orderid`, `itxiaid`, `time`, `content` FROM `reply` WHERE `orderid`='"+str(orderid)+"' AND `replybool`='0' ORDER BY `reply`.`index` ASC")
+        helperReply = cur.fetchall()
         for each in knightReply:
             result.append(each)
         for each in helperReply:
@@ -29,7 +31,8 @@ def addReply(replybool, orderid, itxiaid, time, content):
     try:
         if (content == ""):
             return 0
-        mydb.query("INSERT INTO `reply` (`replybool`, `orderid`, `itxiaid`, `time`, `content`) VALUES ( '"+str(replybool)+"', '"+str(orderid)+"', '"+str(itxiaid)+"', '"+time+"', '"+content+"');")
+        cur.execute("INSERT INTO `reply` (`replybool`, `orderid`, `itxiaid`, `time`, `content`) VALUES ( '"+str(replybool)+"', '"+str(orderid)+"', '"+str(itxiaid)+"', '"+time+"', '"+content+"');")
+        conn.commit()
         return 1
     except Exception, e:
         print e
@@ -38,7 +41,8 @@ def addReply(replybool, orderid, itxiaid, time, content):
 def check_index_itxia(rid, id):
     result = False
     try:
-        replyList = mydb.query("SELECT `index` FROM `reply` WHERE `index`=$rid AND `itxiaid`=$id ", vars=locals())
+        cur.execute("SELECT `index` FROM `reply` WHERE `index`=$rid AND `itxiaid`="+str(id))
+        replyList = cur.fetchall()
         for each in replyList:
             result = True
             pass
@@ -50,7 +54,8 @@ def check_index_itxia(rid, id):
 
 def delReply(rid):
     try:
-        mydb.query("DELETE FROM `reply` WHERE `index`=$rid ", vars=locals())
+        cur.execute("DELETE FROM `reply` WHERE `index`= " + str(rid))
+        conn.commit()
         return 1
     except Exception, e:
         print e

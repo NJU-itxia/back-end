@@ -7,13 +7,12 @@ Created on 2015-1-7
 @author: LC
 '''
 
-from config.setting import mysql
+from config.setting import cur,conn
 
 def getFile(orderid):
     result = []
     try:
-        cursor = mysql.connect.cursor()
-        cursor.execute('yunfile', vars=locals(), where="oid=$orderid")
+        cur.execute('yunfile', vars=locals(), where="oid=$orderid")
         for each in fileList:
             result.append(each)
     except Exception, e:
@@ -23,7 +22,8 @@ def getFile(orderid):
 def getAllFile():
     result = []
     try:
-        fileList = mydb.select('yunfile', order="id ASC")
+        cur.execute('select * from yunfile order by id ASC')
+        fileList = cur.fetchall()
         for each in fileList:
             result.append(each)
     except Exception, e:
