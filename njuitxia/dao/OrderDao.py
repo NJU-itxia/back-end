@@ -8,7 +8,7 @@ Created on 2015-1-7
 '''
 
 import string
-from config.setting import mysql
+from config.setting import cur,conn
 
 WORK = 1
 FINISH = 2
@@ -16,9 +16,9 @@ FINISH = 2
 def getWait(location):
     result = []
     try:
-        cursor = mysql.connect.cursor()
-        cursor.execute("SELECT `id`, `updatedon`, `phone`, `bbsid`, `location`, `model`, `os`, `desc`, `reply`, `name` FROM `order` WHERE `status`='0' AND `location`="+location+" ORDER BY `order`.`updatedon` ASC")
-        orderInfo = cursor.fetchall()
+
+        cur.execute("SELECT `id`, `updatedon`, `phone`, `bbsid`, `location`, `model`, `os`, `desc`, `reply`, `name` FROM `order` WHERE `status`='0' AND `location`="+location+" ORDER BY `order`.`updatedon` ASC")
+        orderInfo = cur.fetchall()
         for each in orderInfo:
             result.append(each)
     except Exception, e:
@@ -28,9 +28,9 @@ def getWait(location):
 def getWork(location):
     result = []
     try:
-        cursor = mysql.connect.cursor()
-        cursor.execute("SELECT `order`.`id` as `id`, `updatedon`, `phone`, `bbsid`, `order`.`location` as `location`, `model`, `os`, `desc`, `reply`, `order`.`name` as `name` , `members`.`account` as `handler` FROM `order` LEFT JOIN `members` ON `order`.`handler`=`members`.`id` WHERE ( `order`.`status`='1' OR `order`.`status`='3' ) AND `order`.`location`="+location+" ORDER BY `order`.`updatedon` ASC")
-        orderInfo = cursor.fetchall()
+
+        cur.execute("SELECT `order`.`id` as `id`, `updatedon`, `phone`, `bbsid`, `order`.`location` as `location`, `model`, `os`, `desc`, `reply`, `order`.`name` as `name` , `members`.`account` as `handler` FROM `order` LEFT JOIN `members` ON `order`.`handler`=`members`.`id` WHERE ( `order`.`status`='1' OR `order`.`status`='3' ) AND `order`.`location`="+location+" ORDER BY `order`.`updatedon` ASC")
+        orderInfo = cur.fetchall()
         for each in orderInfo:
             result.append(each)
     except Exception, e:
@@ -41,9 +41,9 @@ def getFinish(location, page, size):
     result = []
     page = page * size
     try:
-        cursor = mysql.connect.cursor()
-        cursor.execute("SELECT `order`.`id` as `id`, `updatedon`, `phone`, `bbsid`, `order`.`location` as `location`, `model`, `os`, `desc`, `reply`, `order`.`name` as `name` , `members`.`account` as `handler` FROM `order` LEFT JOIN `members` ON `order`.`handler`=`members`.`id` WHERE `order`.`status`='2' AND `order`.`location`=$location ORDER BY `order`.`updatedon` DESC LIMIT "+page+", "+ size)
-        orderInfo = cursor.fetchall()
+
+        cur.execute("SELECT `order`.`id` as `id`, `updatedon`, `phone`, `bbsid`, `order`.`location` as `location`, `model`, `os`, `desc`, `reply`, `order`.`name` as `name` , `members`.`account` as `handler` FROM `order` LEFT JOIN `members` ON `order`.`handler`=`members`.`id` WHERE `order`.`status`='2' AND `order`.`location`=$location ORDER BY `order`.`updatedon` DESC LIMIT "+page+", "+ size)
+        orderInfo = cur.fetchall()
         for each in orderInfo:
             result.append(each)
     except Exception, e:
@@ -60,9 +60,9 @@ def getSearch(search, page, size):
         pass
     condition=" OR ".join(checkType);
     try:
-        cursor = mysql.connect.cursor()
-        cursor.execute("SELECT `order`.`id` as `id`, `updatedon`, `phone`, `bbsid`, `order`.`location` as `location`, `model`, `os`, `desc`, `reply`, `order`.`name` as `name` , `members`.`account` as `handler` FROM `order` LEFT JOIN `members` ON `order`.`handler`=`members`.`id` WHERE " + condition + " ORDER BY `order`.`updatedon` DESC LIMIT "+page+", "+size)
-        orderInfo = cursor.fetchall()
+
+        cur.execute("SELECT `order`.`id` as `id`, `updatedon`, `phone`, `bbsid`, `order`.`location` as `location`, `model`, `os`, `desc`, `reply`, `order`.`name` as `name` , `members`.`account` as `handler` FROM `order` LEFT JOIN `members` ON `order`.`handler`=`members`.`id` WHERE " + condition + " ORDER BY `order`.`updatedon` DESC LIMIT "+page+", "+size)
+        orderInfo = cur.fetchall()
         for each in orderInfo:
             result.append(each)
     except Exception, e:
@@ -78,9 +78,9 @@ def getSearchNum(search):
         pass
     condition=" OR ".join(checkType);
     try:
-        cursor = mysql.connect.cursor()
-        cursor.execute("SELECT count(*) AS num FROM `order` WHERE " + condition)
-        orderInfo = cursor.fetchall()
+
+        cur.execute("SELECT count(*) AS num FROM `order` WHERE " + condition)
+        orderInfo = cur.fetchall()
         for each in orderInfo:
             result.append(each)
     except Exception, e:
@@ -91,21 +91,21 @@ def getSearchNum(search):
 def getOrderCount(location):
     num = []
     result = []
-    cursor = mysql.connect.cursor()
-    cursor.execute("SELECT count(*) AS num FROM `order` WHERE `status`='0' AND `location`="+location)
-    waitNum = cursor.fetchall()
+    cur = mysql.connect.cur()
+    cur.execute("SELECT count(*) AS num FROM `order` WHERE `status`='0' AND `location`="+location)
+    waitNum = cur.fetchall()
     for each in waitNum:
         result.append(each)
     num.append(result[0].num)
     result = []
-    cursor.execute("SELECT count(*) AS num FROM `order` WHERE (`status`='1' OR `status`='3') AND `location`="+location)
-    workNum = cursor.fetchall()
+    cur.execute("SELECT count(*) AS num FROM `order` WHERE (`status`='1' OR `status`='3') AND `location`="+location)
+    workNum = cur.fetchall()
     for each in workNum:
         result.append(each)
     num.append(result[0].num)
     result = []
-    cursor.execute("SELECT count(*) AS num FROM `order` WHERE `status`='2' AND `location`="+location)
-    finishNum = cursor.fetchall()
+    cur.execute("SELECT count(*) AS num FROM `order` WHERE `status`='2' AND `location`="+location)
+    finishNum = cur.fetchall()
     for each in finishNum:
         result.append(each)
     num.append(result[0].num)
@@ -113,7 +113,7 @@ def getOrderCount(location):
 
 def changeOrderStatus(oid, handler, status):
     try:
-        cursor.execute("UPDATE order SET `handlder`="+handlder+",`status`="+status+" where id='"+oid+"'")
+        cur.execute("UPDATE order SET `handlder`="+handlder+",`status`="+status+" where id='"+oid+"'")
         return 1
     except:
         return None
@@ -145,9 +145,9 @@ def getNewReplyOrder(location):
 def getHelperOrder(account):
     result = []
     try:
-        cursor = mysql.connect.cursor()
-        cursor.execute("SELECT * FROM `order` WHERE `phone`="+account+" ORDER BY `id` DESC")
-        replyList = cursor.fetchall()
+
+        cur.execute("SELECT * FROM `order` WHERE `phone`="+account+" ORDER BY `id` DESC")
+        replyList = cur.fetchall()
         for each in replyList:
             result.append(each)
     except Exception, e:
@@ -156,8 +156,8 @@ def getHelperOrder(account):
 
 def addOrder(time, phone, bbsid, location, model, os, desc, name):
     try:
-        cursor = mysql.connect.cursor()
-        cursor.execute("INSERT INTO `order` (`updatedon`, `phone`, `bbsid`, `location`, `model`, `os`, `desc`, `name`, `status`) VALUES ( '"+time+"\', '"+phone+"', '"+bbsid+"', '"+location+"', '"+model+"', '"+os+"', '"+desc+"', '"+name+"', '0');")
+
+        cur.execute("INSERT INTO `order` (`updatedon`, `phone`, `bbsid`, `location`, `model`, `os`, `desc`, `name`, `status`) VALUES ( '"+time+"\', '"+phone+"', '"+bbsid+"', '"+location+"', '"+model+"', '"+os+"', '"+desc+"', '"+name+"', '0');")
         return 1
     except Exception, e:
         print e
@@ -166,9 +166,9 @@ def addOrder(time, phone, bbsid, location, model, os, desc, name):
 def getOrder(oid):
     result = []
     try:
-        cursor = mysql.connect.cursor()
-        cursor.excecute("SELECT * FROM `order` WHERE `id`='" + oid + "'")
-        orderList = cursor.fetchall()
+
+        cur.excecute("SELECT * FROM `order` WHERE `id`='" + oid + "'")
+        orderList = cur.fetchall()
         for each in orderList:
             result.append(each)
             pass
@@ -178,8 +178,8 @@ def getOrder(oid):
 
 def delOrder(oid):
     try:
-        cursor = mysql.connect.cursor()
-        cursor.excecute("DELETE FROM `order` where id = " + oid
+
+        cur.excecute("DELETE FROM `order` where id = " + oid
         return 1
     except Exception, e:
         print e

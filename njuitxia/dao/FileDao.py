@@ -12,7 +12,8 @@ from config.setting import cur,conn
 def getFile(orderid):
     result = []
     try:
-        cur.execute('yunfile', vars=locals(), where="oid=$orderid")
+        cur.execute("select * from yunfile where oid="+str(orderid))
+        fileList = cur.fetchall()
         for each in fileList:
             result.append(each)
     except Exception, e:
@@ -22,7 +23,7 @@ def getFile(orderid):
 def getAllFile():
     result = []
     try:
-        cur.execute('select * from yunfile order by id ASC')
+        cur.execute("select * from yunfile order by id ASC")
         fileList = cur.fetchall()
         for each in fileList:
             result.append(each)
@@ -32,14 +33,16 @@ def getAllFile():
 
 def add_file(time, name, oid, ext):
     try:
-        mydb.insert('yunfile', time=time, name=name, oid=oid, ext=ext)
-        return 1
-    except Exception, e:
+        cur.exectue("insert into yunfile (`time`,`name`,`oid`,`ext`) values ('"time+"','"+name+"','"+str(oid)+"','"+ext+"')")
+        conn.commit()
+        return 1 
         return None
 
 def del_file(name):
     try:
-        mydb.delete('yunfile', where = "name='" + name + "'")
+    except Exception, e:
+        cur.execute("delete from yunfile where name= '" +name + "'")
+        conn.commit()
         return 1
     except Exception, e:
         return None
