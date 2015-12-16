@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from datetime import datetime
 MONGO_HOST = 'localhost'
 MONGO_PORT = 27017
 MONGO_DBNAME = 'apitest'
@@ -7,8 +7,11 @@ MONGO_DBNAME = 'apitest'
 SOFT_DELETE = True
 HATEOAS = False
 
-RESOURCE_METHODS = ['GET', 'POST', 'DELETE']
-ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
+RESOURCE_METHODS = ['GET', 'POST']
+ITEM_METHODS = ['GET', 'PATCH', 'DELETE']
+PAGINATION_DEFAULT = 30
+X_DOMAINS = '*'
+X_HEADERS = ['If-Match']
 
 # 订单：
 #    - phone_number:
@@ -24,9 +27,11 @@ ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
 #    - description:
 #       问题描述
 #    - status:
-#       订单状态
+#       订单状态: 等待处理，正在处理，处理完成。
 #    - comments:
 #       订单回复
+#    - handled_by:
+#       处理该订单的 IT 侠用户名
 order_schema = {
     'phone_number': {
         'type': 'string',
@@ -56,9 +61,9 @@ order_schema = {
         'required': True,
     },
     'status': {
-        'type': 'integer',
-        'allowed': [0, 1, -1],  # 0: 等待处理，1: 正在处理，-1: 处理完成。
-        'default': 0,
+        'type': 'string',
+        'allowed': ['waiting', 'working', 'done'],
+        'default': 'waiting',
     },
     'comments': {
         'type': 'list',
@@ -67,17 +72,74 @@ order_schema = {
             'type': 'dict',
             'schema': {
                 'username': {'type': 'string'},
-                'created_at': {'type': 'datetime'},
+                'created_at': {'type': 'datetime', 'default': datetime.utcnow()},
                 'content': {'type': 'string', 'empty': False},
             },
         },
+    },
+    'handled_by': {
+        'type': 'string',
+    },
+}
+
+
+# IT 侠：
+#    - name:
+#       姓名
+#    - username:
+#       帐号名
+#    - password:
+#       密码
+#    - email:
+#       电子邮箱
+#    - campus:
+#       所在校区
+#    - role:
+#       IT 侠，网站管理员
+itxia_schema = {
+    'name': {
+        'type': 'string',
+        'required': True,
+    },
+    'username': {
+        'type': 'string',
+        'required': True,
+    },
+    'password': {
+        'type': 'string',
+        'required': True,
+    },
+    'email': {
+        'type': 'string',
+        'required': True,
+    },
+    'compus': {
+        'type': 'string',
+        'required': True,
+        'allowed': ['gulou', 'xianlin'],
+    },
+    'role': {
+        'type': 'string',
+        'required': True,
+        'allowed': ['itxia', 'admin'],
     },
 }
 
 orders = {
     'schema': order_schema,
+    'datasource': {
+        'default_sort': [('_created', -1)]
+    }
+}
+
+itxia = {
+    'schema': itxia_schema,
+    'datasource': {
+        'projection': {'password': 0}
+    }
 }
 
 DOMAIN = {
     'orders': orders,
+    'itxia': itxia,
 }

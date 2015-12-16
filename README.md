@@ -1,5 +1,10 @@
 #NJU-ITXia
 
+!!! 安装最新版的 eve
+```
+pip install git+git://github.com/nicolaiarocci/eve.git
+```
+
 * RESTFul API design and implementation.
 * NoSQL database.
 * User management: user roles, authentication and authorization.

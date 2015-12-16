@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <p>使用 python -m SimpleHTTPServer 命令来 serve 这个页面，浏览器 http://localhost:8000/test_cros.html 访问本页面。</p>
+  <button id="b" style="display:inline-block;width:100px;padding:10px;margin:20px">点我</button>
+  <button id="h" style="display:none;width:100px;padding:10px;margin:20px">清除</button>
+  <pre id="a"></pre>
+  <script src="http://localhost:5050/static/asset/js/libs/jquery.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      var a = $('#a'),
+          b = $('#b'),
+          h = $('#h');
+      b.on('click', function(event) {
+        event.preventDefault();
+        $.ajax({
+          url: 'http://localhost:5000/orders',
+          type: 'GET',
+          headers: {'If-Match': 'afsdfsdfjsdfsdfsh'},
+          dataType: 'json',
+        })
+        .done(function(data) {
+          console.log("success");
+          h.show();
+          a.text(JSON.stringify(data, null, '  '));
+        });
+      });
+
+      h.on('click', function(event) {
+        event.preventDefault();
+        h.hide();
+        a.text('');
+      });
+
+    });
+  </script>
+</body>
+</html>
