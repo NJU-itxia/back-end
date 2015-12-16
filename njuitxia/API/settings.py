@@ -11,7 +11,7 @@ RESOURCE_METHODS = ['GET', 'POST']
 ITEM_METHODS = ['GET', 'PATCH', 'DELETE']
 PAGINATION_DEFAULT = 30
 X_DOMAINS = '*'
-X_HEADERS = ['If-Match']
+X_HEADERS = ['If-Match', 'Content-Type']
 
 # 订单：
 #    - phone_number:
@@ -56,6 +56,10 @@ order_schema = {
         'type': 'string',
         'required': True,
     },
+    'OS': {
+        'type': 'string',
+        'required': True,
+    },
     'description': {
         'type': 'string',
         'required': True,
@@ -65,18 +69,18 @@ order_schema = {
         'allowed': ['waiting', 'working', 'done'],
         'default': 'waiting',
     },
-    'comments': {
-        'type': 'list',
-        'required': False,
-        'schema': {
-            'type': 'dict',
-            'schema': {
-                'username': {'type': 'string'},
-                'created_at': {'type': 'datetime', 'default': datetime.utcnow()},
-                'content': {'type': 'string', 'empty': False},
-            },
-        },
-    },
+    # 'comments': {
+    #     'type': 'list',
+    #     'required': False,
+    #     'schema': {
+    #         'type': 'dict',
+    #         'schema': {
+    #             'username': {'type': 'string'},
+    #             'created_at': {'type': 'datetime', 'default': datetime.utcnow()},
+    #             'content': {'type': 'string', 'empty': False},
+    #         },
+    #     },
+    # },
     'handled_by': {
         'type': 'string',
     },
