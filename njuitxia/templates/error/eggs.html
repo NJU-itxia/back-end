@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>$:config.site_name</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Bootstrap -->
+<link rel="stylesheet" href="$:basefile.bs_css">
+
+<!-- <link rel="stylesheet" href="$config.static/style/user/login.css"> -->
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+	<script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+	<script src="http://cdn.bootcss.com/respond.js/1.3.0/respond.min.js"></script>
+<![endif]-->
+</head>
+
+<body style="background:url('$config.static/images/eggs.gif') no-repeat;">
+	<div class="container" style="text-align: center;">
+
+		<div>
+			<h1>恩，这个是彩蛋《罗小黑战记》</h1>
+			<hr class="colorgraph">
+		</div>
+		<div id = "player">
+		</div>
+		<div id = "btndiv">
+		</div>
+		<a type="button" class="btn btn-success" href="/">返回主页</a>
+	</div>
+
+	<!-- Bootstrap core JavaScript -->
+	<!-- ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="$:basefile.jq"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="$:basefile.bs_js"></script>
+	<script type="text/javascript">
+		var namelist = ["第一集——喵", "第二集——逃", "第三集", "第四集", "第五集——唷", "第六集——阿根", "第七集——比丢", "第八集——深山", "第八集后续——再见了，比丢", "第九集——谛听", "第十集——老君", "第十一集——蓝溪镇", "第十二集——拾贰集","第十三集——灵质力", "第十四集——花精灵", "第十五集——灵风山", "第十六集——仙与精灵", "MV番外——晚安喵", "番外——罗小白的期末考试"];
+		var aidlist = ["1082731", "1082707", "200325", "284265", "420469", "509755", "601099", "755279", "756779", "891582", "1089106", "1319201", "1537299", "1752926", "1842334", "1960505", "2320089", "1150876", "118653"];
+		var playerbefore = '<embed height="452" width="544" quality="high" allowfullscreen="true" type="application/x-shockwave-flash" src="http://share.acg.tv/flash.swf" flashvars="aid=';
+		var plyaerafter = '&page=1" pluginspage="http://www.adobe.com/shockwave/download/download.cgi?P1_Prod_Version=ShockwaveFlash"></embed>';
+		var btnbefore = '<button type="button" class="btn btn-default">';
+		for (var i = 0; i < namelist.length; i++) {
+			var button = $$("<button></button>").text(namelist[i]);
+			button.addClass("btn btn-default");
+			button.attr("id", i);
+			$$("#btndiv").append(button);
+		};
+
+		$$(".btn-default").click(function(){
+			var id = $$(this).attr("id");
+			htmlsrc = playerbefore + aidlist[id] + plyaerafter;
+			$$("#player").html(htmlsrc);
+		});
+
+		$$(".btn-default").click(function(){
+			$$(".btn-default").toggleClass("active", false);
+			$$(this).addClass("active");
+		});
+
+		$$("#16").click();
+	</script>
+</body>
+</html>

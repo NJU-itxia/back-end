@@ -1,0 +1,96 @@
+$def with(order)
+
+$var active: now
+$var cssfiles: helper.css
+$var jsfiles: 
+
+
+<div class="container" style="background-color: #fff">
+	<div>
+		<h1>你好,请修改你的请求</h1>
+		<hr class="colorgraph">
+	</div>
+
+	<form class="form-horizontal" role="form" action="/helper/modify"
+		method="post">
+		<input type="text" value="$order.id" name="oid" style="display:none" />
+		<div class="form-group">
+			<label for="inputPhone" class="col-sm-2 control-label">手机:</label>
+			<div class="col-sm-8">
+				<p class="form-control-static" id="inputPhone">
+					<strong>$order.phone</strong>
+				</p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="inputName" class="col-sm-2 control-label">姓名:</label>
+			<div class="col-sm-8">
+				<input type="text" name="name" class="form-control" id="inputName" value="$order.name" required>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="inputbbs" class="col-sm-2 control-label">小百合ID:</label>
+			<div class="col-sm-8">
+				<input type="text" name="bbs" class="form-control" id="inputbbs" value="$order.bbsid">
+				<p class="help-block">
+					<span class="glyphicon glyphicon-question-sign"></span>
+					若没有百合ID可忽略此项,仅是用于区分是否为本校师生
+				</p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="inputLocal" class="col-sm-2 control-label">校区:</label>
+			<div class="col-sm-2">
+				<div class="radio">
+					<label> <input type="radio" name="local" id="inputLocal"
+						value="鼓楼" checked> 鼓楼校区
+					</label>
+				</div>
+			</div>
+			<div class="col-sm-2">
+				<div class="radio">
+					<label> <input type="radio" name="local" id="inputLocal"
+						value="仙林"> 仙林校区
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="inputModel" class="col-sm-2 control-label">电脑型号:</label>
+			<div class="col-sm-8">
+				<input type="text" name="model" class="form-control" id="inputModel" value="$order.model" required>
+				<p class="help-block">
+					<span class="glyphicon glyphicon-question-sign"></span>电脑型号可以查看发票、说明书标识，在电脑背面或电池下面也有电脑型号标签
+				</p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="inputOS" class="col-sm-2 control-label">操作系统:</label>
+			<div class="col-sm-8">
+				<input type="text" name="os" class="form-control" id="inputOS" value="$order.os" required>
+				<p class="help-block">
+					<span class="glyphicon glyphicon-question-sign"></span>如:win-xp,win7-32位/64位,win8-32位/64位,mac,ubuntu-32位/64位
+				</p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="inputDesc" class="col-sm-2 control-label">问题描述:</label>
+			<div class="col-sm-8">
+				<textarea name="desc" class="form-control" id="inputDesc" rows="5" required>$:order.desc</textarea>
+				<p class="help-block">
+					<span class="glyphicon glyphicon-question-sign"></span>
+					请描述目前电脑的问题，电脑出现问题的前后，自己有哪些异常操作,最好能明确是需要的帮助是软件上的还是硬件上的.描述故障，请尽量描述清楚下列事项：故障的现象(例如系统无法启动、运行时风扇狂转),故障持续时间
+				</p>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-8">
+				<button class="btn btn-primary" type="submit">修改</button>
+				<p class="help-block">
+					<span class="glyphicon glyphicon-question-sign"></span>上面关于电脑的问题，请尽可能的全面，这样我们可以快速定位故障的原因。
+					<br />
+				</p>
+			</div>
+		</div>
+	</form>
+</div>

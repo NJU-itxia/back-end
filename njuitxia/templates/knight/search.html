@@ -1,0 +1,172 @@
+$def with(number, data, page, status, search, searchNum, user)
+
+$var active: finish
+$var cssfiles: knight.css
+$var jsfiles: knight.js
+$var status: $status
+
+<div class="container">
+
+	<div>
+		<h1>搜索结果-共$searchNum条记录</h1>
+		<hr class="colorgraph">
+	</div>
+
+	<div class="row">
+		<div class="col-md-3">
+			<div class="list-group">
+				<a href="/knight/wait"
+					class="list-group-item"><span
+					class="badge">$number[0]</span>等待处理</a> <a href="/knight/work"
+					class="list-group-item"><span
+					class="badge">$number[1]</span>正在处理</a> <a href="/knight/finish"
+					class="list-group-item list-group-item-success"><span
+					class="badge">$number[2]</span>处理完成</a>
+			</div>
+		</div>
+
+		<div class="col-md-6">
+			<form role="form" action="/knight/finish" method="GET">
+				<div class="input-group">
+						<span class="input-group-addon">记录搜索</span> <input type="text" name="search"
+							class="form-control" placeholder="关键字" value="$search" required> <span
+							class="input-group-btn">
+							<button class="btn btn-primary" type="submit" value="Submit"><span class="glyphicon glyphicon-search"></span></button>
+							<a class="btn btn-warning" href="/knight/finish">返回</a>
+						</span>
+				</div>
+			</form>
+
+			<br />
+
+		$for each in data:
+			<div class="panel panel-success" id="$each.id">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<a target="_blank" href="http://browse.renren.com/s/all?from=opensearch&q=$:each.name 南京大学">$:each.name</a><small>$each.updatedon</small>
+					</h3>
+				</div>
+				<div class="panel-body">
+					<p>
+						<strong>IT侠: $:each.handler</strong>
+					</p>
+					<p>
+						<strong>提交时间: </strong>$each.updatedon
+					</p>
+					<p>
+						<strong>手机号码: </strong><a href="tel:$:each.phone">$:each.phone</a>
+					</p>
+					<form class="form" action="http://bbs.nju.edu.cn/bbsfind" method="post">
+						<input type=hidden name=flag value=1>
+						<input type=hidden name=user value="$:each.bbsid">
+						<input type=hidden name=title>
+						<input type=hidden name=title2>
+						<input type=hidden name=title3>
+						<input type=hidden name=day value=0>
+						<input type=hidden name=day2 value=999>
+						<p>
+							<strong>百合帐号: </strong><span class="subform">$:each.bbsid</span>
+						</p>
+					</form>
+					<p>
+						<strong>电脑型号: </strong><a target="_blank" href="http://www.baidu.com/s?word=$:each.model+拆机图">$:each.model</a>
+					</p>
+					<p>
+						<strong>操作系统: </strong>$:each.os
+					</p>
+					<p>
+						<strong>问题描述: </strong>$:each.desc
+					</p>
+
+					$if not (each.filelist == []):
+						<div style="margin: 0px 0px 10px;">
+							<strong>上传文件: </strong>
+							$for eachfile in each.filelist:
+								$if ((eachfile.ext == '.JPG') or (eachfile.ext == '.JPEG') or (eachfile.ext == '.BMP') or (eachfile.ext == '.GIF') or (eachfile.ext == '.PNG')):
+									<!-- Button trigger modal -->
+									<button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal$loop.index" style="color: #428BCA;">
+										$eachfile.ext文件$loop.index
+									</button>
+
+									<!-- Modal -->
+									<div class="modal fade" id="myModal$loop.index" tabindex="-1" role="dialog" aria-labelledby="myModalLabel$loop.index" aria-hidden="true">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+													<h4 class="modal-title" id="myModalLabel$loop.index">$eachfile.ext文件$loop.index</h4>
+												</div>
+												<div class="modal-body">
+													<a target="_blank" href="$webDiskUrl/$eachfile.name" class="btn btn-default btn-sm" role="button"><img style="height: auto; width: 100%;" src="$webDiskUrl/$eachfile.name"></a>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								$else:
+									<a target="_blank" href="$webDiskUrl/$eachfile.name" class="btn btn-default btn-sm" role="button" style="color: #428BCA;">$eachfile.ext文件$loop.index</a>
+						</div>
+
+					<button type="button" class="btn btn-default replybtn">展开回复信息($len(each.reply))</button>
+
+					<div class="reply">
+						$for eachreply in each.reply:
+							$if (eachreply.replybool == 0):
+								$ style = "callout callout-left"
+							$else:
+								$ style = "callout callout-right"
+								
+							<div class="row replyrow" replyid="$eachreply.index">
+								<div class="$style">
+									<h4>
+										$if (user == eachreply.name):
+											<small><span class="glyphicon glyphicon-remove" style="color:#CC0033;display:none;"></span></small>
+										$:eachreply.name <small>$eachreply.time</small>
+									</h4>
+									<p>$:eachreply.content</p>
+								</div>
+							</div>
+
+						<br />
+						<textarea class="form-control content" name="content" rows="3"
+							placeholder="点击回复..."></textarea>
+						<input type="text" class="order" name="order" value="$each.id" style="display: none">
+						<br />
+						<button class="subbtn btn btn-block btn-primary">回复</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<div class="container" style="text-align:center;">
+	<ul class="pagination">
+		<li><a href="/knight/finish?page=0&search=$search"><span class="glyphicon glyphicon-step-backward"></span></a></li>
+		$ max = searchNum/30
+		$if (page > 0):
+			$ back = page - 1
+		$else:
+			$ back = 0
+		$if (page < max):
+			$ next = page + 1
+		$else:
+			$ next = max
+		<li><a href="/knight/finish?page=$back&search=$search"><span class="glyphicon glyphicon-backward"></span></a></li>
+		$for i in range(0, searchNum/30 + 1):
+			$if (i == page-3):
+				<li><a>...</a></li>
+			$if ((i >= page-2) and (i <= page+2)):
+				$if (i == page):
+					<li class="active"><a href="/knight/finish?page=$i&search=$search">$loop.index</a></li>
+				$else:
+					<li><a href="/knight/finish?page=$i&search=$search">$loop.index</a></li>
+			$if (i == page+3):
+				<li><a>...</a></li>
+		<li><a href="/knight/finish?page=$next&search=$search"><span class="glyphicon glyphicon-forward"></span></a></li>
+		<li><a href="/knight/finish?page=$max&search=$search"><span class="glyphicon glyphicon-step-forward"></span></a></li>
+	</ul>
+</div>
