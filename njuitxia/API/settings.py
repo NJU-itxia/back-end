@@ -69,18 +69,18 @@ order_schema = {
         'allowed': ['waiting', 'working', 'done'],
         'default': 'waiting',
     },
-    # 'comments': {
-    #     'type': 'list',
-    #     'required': False,
-    #     'schema': {
-    #         'type': 'dict',
-    #         'schema': {
-    #             'username': {'type': 'string'},
-    #             'created_at': {'type': 'datetime', 'default': datetime.utcnow()},
-    #             'content': {'type': 'string', 'empty': False},
-    #         },
-    #     },
-    # },
+    'comments': {
+        'type': 'list',
+        'required': False,
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'username': {'type': 'string'},
+                'created_at': {'type': 'datetime', 'default': datetime.utcnow()},
+                'content': {'type': 'string', 'empty': False},
+            },
+        },
+    },
     'handled_by': {
         'type': 'string',
     },
