@@ -1,5 +1,5 @@
 Flask
-git+git://github.com/nicolaiarocci/eve.git
-pymongo==2.8
+eve
+pymongo
 pytest
 requests
