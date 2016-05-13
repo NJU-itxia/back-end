@@ -17,4 +17,4 @@ app.on_post_GET += post_get_callback
 app.on_post_POST += post_post_callback
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
