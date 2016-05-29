@@ -149,7 +149,7 @@ itxia = {
     'cache_expires': 0,    
 }
 
-accounts = {
+account = {
     'schema': itxia_schema,
     'datasource': {
         'projection': {'password': 0}
@@ -168,5 +168,5 @@ accounts = {
 DOMAIN = {
     'orders': orders,
     'itxia': itxia,
-    'accounts': accounts
+    'account': account
 }
