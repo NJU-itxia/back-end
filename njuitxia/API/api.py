@@ -15,9 +15,6 @@ class RolesAuth(BasicAuth):
              # only retrieve a user if his roles match ``allowed_roles``
              lookup['roles'] = {'$in': allowed_roles}
          account = accounts.find_one(lookup)
-         # set 'AUTH_FIELD' value to the account's ObjectId
-         # (instead of _Id, you might want to use ID_FIELD)
-         self.set_request_auth_value(account['_id'])
          return account and check_password_hash(account['password'], password)
 
 def post_get_callback(resource, request, payload):
