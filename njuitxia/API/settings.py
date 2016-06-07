@@ -7,6 +7,8 @@ MONGO_DBNAME = 'apitest'
 SOFT_DELETE = True
 HATEOAS = False
 
+PUBLIC_METHODS = ['GET', 'POST']
+PUBLIC_ITEM_METHODS = ['GET']
 RESOURCE_METHODS = ['GET', 'POST']
 ITEM_METHODS = ['GET', 'PATCH', 'DELETE']
 PAGINATION_DEFAULT = 30
@@ -108,6 +110,7 @@ itxia_schema = {
     'username': {
         'type': 'string',
         'required': True,
+        'unique': True,
     },
     'password': {
         'type': 'string',
@@ -127,6 +130,11 @@ itxia_schema = {
         'required': True,
         'allowed': ['itxia', 'admin'],
     },
+    #an additional read-only entry point
+    'additional_lookup': {
+        'url': 'regex("[\w]+")',
+        'field': 'username',
+    },        
 }
 
 orders = {
@@ -141,12 +149,6 @@ itxia = {
     'datasource': {
         'projection': {'password': 0}
     }
-    'additional_lookup': {
-        'url': 'regex("[\w]+")',
-        'field': 'username',
-    },
-    'cache_control': '',
-    'cache_expires': 0,    
 }
 
 accounts = {
@@ -154,15 +156,7 @@ accounts = {
     'datasource': {
         'projection': {'password': 0}
     },
-    #an additional read-only entry point
-    'additional_lookup': {
-        'url': 'regex("[\w]+")',
-        'field': 'username',
-    },
-    'cache_control': '',
-    'cache_expires': 0,
     'allowed_roles': ['admin'],
-
 }
 
 DOMAIN = {

@@ -108,6 +108,7 @@ itxia_schema = {
     'username': {
         'type': 'string',
         'required': True,
+        'unique': True,
     },
     'password': {
         'type': 'string',
@@ -127,6 +128,11 @@ itxia_schema = {
         'required': True,
         'allowed': ['itxia', 'admin'],
     },
+    #an additional read-only entry point
+    'additional_lookup': {
+        'url': 'regex("[\w]+")',
+        'field': 'username',
+    },        
 }
 
 orders = {
@@ -141,32 +147,18 @@ itxia = {
     'datasource': {
         'projection': {'password': 0}
     }
-    'additional_lookup': {
-        'url': 'regex("[\w]+")',
-        'field': 'username',
-    },
-    'cache_control': '',
-    'cache_expires': 0,    
 }
 
-account = {
+accounts = {
     'schema': itxia_schema,
     'datasource': {
         'projection': {'password': 0}
     },
-    #an additional read-only entry point
-    'additional_lookup': {
-        'url': 'regex("[\w]+")',
-        'field': 'username',
-    },
-    'cache_control': '',
-    'cache_expires': 0,
     'allowed_roles': ['admin'],
-
 }
 
 DOMAIN = {
     'orders': orders,
     'itxia': itxia,
-    'account': account
+    'accounts': accounts
 }
