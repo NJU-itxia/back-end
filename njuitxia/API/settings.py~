@@ -5,10 +5,12 @@ MONGO_PORT = 27017
 MONGO_DBNAME = 'apitest'
 
 SOFT_DELETE = True
-HATEOAS = False
+HATEOAS = True
 
+PUBLIC_METHODS = ['GET']
+PUBLIC_ITEM_METHODS = ['GET']
 RESOURCE_METHODS = ['GET', 'POST']
-ITEM_METHODS = ['GET', 'PATCH', 'DELETE']
+ITEM_METHODS = ['GET', 'PATCH', 'DELETE', 'PUT']
 PAGINATION_DEFAULT = 30
 X_DOMAINS = '*'
 X_HEADERS = ['If-Match', 'Content-Type']
@@ -116,9 +118,10 @@ itxia_schema = {
     },
     'email': {
         'type': 'string',
+        'regex': '^\S+@\S+$',
         'required': True,
     },
-    'compus': {
+    'campus': {
         'type': 'string',
         'required': True,
         'allowed': ['gulou', 'xianlin'],
@@ -128,11 +131,7 @@ itxia_schema = {
         'required': True,
         'allowed': ['itxia', 'admin'],
     },
-    #an additional read-only entry point
-    'additional_lookup': {
-        'url': 'regex("[\w]+")',
-        'field': 'username',
-    },        
+    #an additional read-only entry point       
 }
 
 orders = {
@@ -142,10 +141,14 @@ orders = {
     }
 }
 
-itxia = {
+itxias = {
     'schema': itxia_schema,
     'datasource': {
         'projection': {'password': 0}
+    },
+    'additional_lookup': {
+        'url': 'regex("[\w]+")',
+        'field': 'username',
     }
 }
 
@@ -159,6 +162,6 @@ accounts = {
 
 DOMAIN = {
     'orders': orders,
-    'itxia': itxia,
+    'itxias': itxias,
     'accounts': accounts
 }
