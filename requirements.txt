@@ -3,3 +3,4 @@ eve
 pymongo
 pytest
 requests
+eve-swagger
