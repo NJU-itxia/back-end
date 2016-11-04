@@ -4,6 +4,7 @@ MONGO_PORT = 27017
 MONGO_DBNAME = 'restful'
 
 PUBLIC_METHODS = ['GET', 'POST']
+PUBLIC_ITEM_METHODS = ['GET', 'POST']
 RESOURCE_METHODS = ['GET', 'POST']
 ITEM_METHODS = ['GET', 'PATCH', 'DELETE', 'PUT']
 ALLOWED_ROLES = ['admin']
@@ -48,11 +49,6 @@ order_schema = {
     'description': {
         'type': 'string',
         'required': True,
-    },
-    'status': {
-        'type': 'string',
-        'allowed': ['waiting', 'working', 'done'],
-        'default': 'waiting',
     },
     'comments': {
         'type': 'list',
