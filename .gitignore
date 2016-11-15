@@ -1,6 +1,8 @@
 *.py[cod]
 *.py[cod]~
 *.txt~
+*.gitignore~
+*.md~
 
 #migrations
 migrations
