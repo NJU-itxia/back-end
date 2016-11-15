@@ -1,5 +1,5 @@
 
-### POST  /client/register-step-1
+### POST /client/register-step-1
 ```
 //調用此api訪問容聯雲，發送要驗證的手機號
 
@@ -10,7 +10,7 @@ response = {'code':1, 'message': '发送成功'}//code表示成功1或者失敗0
            {'code': 0, 'message': '该用户已经存在,注册失败'}
            {'code': 0, 'message': err_message}//err_message容聯雲傳回的錯誤信息
 ```
-### POST  /client/register-step-2
+### POST /client/register-step-2
 ```
 //調用此api驗證用戶信息，發送驗證碼和手機號
 payload = {'phone_number': '15850551102', 'validate_number': '454078'}
@@ -20,7 +20,7 @@ response = {'code': 1, 'message': '短信验证通过'}
            {'code': 0, 'message': '验证没有通过'}
 ```
 
-### POST  /client/register-step-3
+### POST /client/register-step-3
 ```
 //調用此api提交密碼，發送用戶密碼和手機號，只有驗證過的手機號能提交，這裏後端對密碼格式進行檢查
 POST /client/register-step-3
@@ -33,7 +33,7 @@ response = {'code': 1, 'message': '提交密码成功'}
            {'code': 0, 'message': '验证码没有通过'}
 ```           
 
-### POST  /client/register-step-4
+### POST /client/register-step-4
 ```
 //調用此api完善用戶信息，發送基本資料
 payload = {'phone_number': '15850551102', 'email': '2214102327@qq.com'}
@@ -44,7 +44,7 @@ response = {'code': 1, 'message': '注册成功'}
            {'code': 0, 'message': '验证码没有通过'}
 ``` 
 
-### POST  /client/login
+### POST /client/login
 ```
 //調用此api登錄用戶，發送手機號和token
 payload = {'phone_number': phone_number,
