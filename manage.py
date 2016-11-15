@@ -11,7 +11,7 @@ def make_shell_context():
     return dict(app=app, db=db, Server=Server, Client=Client, Form=Form)
     
 @manager.command    
-def init_datas():
+def testdb():
     client_1 = Client(phone_number='15850551103', password='123456', email='221410232@qq.com');
     client_2 = Client(phone_number='15850123187', password='234786', email='2364726346@qq.com');
     client_3 = Client(phone_number='15850123905', password='234786', email='2err4726346@qq.com');

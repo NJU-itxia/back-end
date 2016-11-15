@@ -153,26 +153,17 @@ class API_1_1(object):
 
 if __name__ == '__main__':
     api = API_1_1()
-    
-    //测试用户注册
+    api.login('15850551103', '123456')
+#    api.get_multi_qiniu_token(2)
+#    api.post_form('xianlin', 'mac', 'win', 'sjfjjsklj',['1.png', '2.png'])
+#    api.client()
+    api.get_forms()
+    #api.logout()
 #    api.register_step_1('15850551102')
 #    validate_number = input("Please input the validate_number in message:\n")
 #    api.register_step_2('15850551102', str(validate_number))
 #    api.register_step_3('15850551102', '1234567', '1234567')
 #    api.register_step_4('15850551102', '2214102@qq.com')
-
-    //测试登录已注册用户
-    api.login('15850551103', '123456')
-
-    //测试提交表单，含图片
-#    api.post_form('xianlin', 'mac', 'win', 'sjfjjsklj',['1.png', '2.png'])
-#    api.client()
-
-    //测试用户查看自己的所有表单
-    api.get_forms()
-    
     #api.get_qiniu_token()
     #api.set_head_picture()
-    
-    //用户退出登录
     api.logout()

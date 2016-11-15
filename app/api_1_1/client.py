@@ -1,7 +1,7 @@
 # coding:utf-8
 from flask import request, jsonify, g, render_template, redirect, url_for, current_app, json
 from app.model import Client, Form
-from .. import db
+from .. import db, redis
 import hashlib
 import time
 import random
@@ -39,7 +39,7 @@ def login():
     m.update(str(int(time.time())))
     token = m.hexdigest()
 
-    pipeline = current_app.redis.pipeline()
+    pipeline = redis.pipeline()
     pipeline.hmset('client:%s' % client.phone_number, {'token': token, 'email': client.email, 'app_online': 1})
     pipeline.set('token:%s' % token, client.phone_number)
     pipeline.expire('token:%s' % token, 3600*24*30)
@@ -52,7 +52,7 @@ def login():
 @login_check
 def client():
     client = g.current_client
-    email = current_app.redis.hget('client:%s' % client.phone_number, 'email')
+    email = redis.hget('client:%s' % client.phone_number, 'email')
     return jsonify({'code': 1, 'email': email, 'phone_number': client.phone_number})
 
 
@@ -61,7 +61,7 @@ def client():
 def logout():
     client = g.current_client
 
-    pipeline = current_app.redis.pipeline()
+    pipeline = redis.pipeline()
     pipeline.delete('token:%s' % g.token)
     pipeline.hmset('client:%s' % client.phone_number, {'app_online': 0})
     pipeline.execute()
@@ -80,7 +80,7 @@ def set_head_picture():
         print e
         db.session.rollback()
         return jsonify({'code': 0, 'message': '未能成功上传'})
-    current_app.redis.hset('client:%s' % client.phone_number, 'avatar_picture', avatar_picture)
+    redis.hset('client:%s' % client.phone_number, 'avatar_picture', avatar_picture)
     return jsonify({'code': 1, 'message': '成功上传'})
     
 
@@ -100,7 +100,7 @@ def register_step_1():
     if not result:
         return jsonify({'code': 0, 'message': err_message})
 
-    pipeline = current_app.redis.pipeline()
+    pipeline = redis.pipeline()
     pipeline.set('validate:%s' % phone_number, validate_number)
     pipeline.expire('validate:%s' % phone_number, 60)
     pipeline.execute()
@@ -115,12 +115,12 @@ def register_step_2():
     """
     phone_number = request.get_json().get('phone_number')
     validate_number = request.get_json().get('validate_number')
-    validate_number_in_redis = current_app.redis.get('validate:%s' % phone_number)
+    validate_number_in_redis = redis.get('validate:%s' % phone_number)
 
     if validate_number != validate_number_in_redis:
         return jsonify({'code': 0, 'message': '验证没有通过'})
 
-    pipe_line = current_app.redis.pipeline()
+    pipe_line = redis.pipeline()
     pipe_line.set('is_validate:%s' % phone_number, '1')
     pipe_line.expire('is_validate:%s' % phone_number, 120)
     pipe_line.execute()
@@ -144,12 +144,12 @@ def register_step_3():
     if password != password_confirm:
         return jsonify({'code': 0, 'message': '密码和密码确认不一致'})
 
-    is_validate = current_app.redis.get('is_validate:%s' % phone_number)
+    is_validate = redis.get('is_validate:%s' % phone_number)
 
     if is_validate != '1':
         return jsonify({'code': 0, 'message': '验证码没有通过'})
 
-    pipeline = current_app.redis.pipeline()
+    pipeline = redis.pipeline()
     pipeline.hset('register:%s' % phone_number, 'password', password)
     pipeline.expire('register:%s' % phone_number, 120)
     pipeline.execute()
@@ -165,12 +165,12 @@ def register_step_4():
     phone_number = request.get_json().get('phone_number')
     email = request.get_json().get('email')
 
-    is_validate = current_app.redis.get('is_validate:%s' % phone_number)
+    is_validate = redis.get('is_validate:%s' % phone_number)
 
     if is_validate != '1':
         return jsonify({'code': 0, 'message': '验证码没有通过'})
 
-    password = current_app.redis.hget('register:%s' % phone_number, 'password')
+    password = redis.hget('register:%s' % phone_number, 'password')
 
     new_client = Client(phone_number=phone_number, password=password, email=email)
     db.session.add(new_client)
@@ -182,8 +182,8 @@ def register_step_4():
         db.session.rollback()
         return jsonify({'code': 0, 'message': '注册失败, 邮箱已注册'})
     finally:
-        current_app.redis.delete('is_validate:%s' % phone_number)
-        current_app.redis.delete('register:%s' % phone_number)
+        redis.delete('is_validate:%s' % phone_number)
+        redis.delete('register:%s' % phone_number)
 
     return jsonify({'code': 1, 'message': '注册成功'})
     

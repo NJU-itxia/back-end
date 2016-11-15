@@ -1,4 +1,5 @@
 class Config(object):
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
     SECRET_KEY = 'saduhsuaihfe332r32rfo43rtn3noiYUG9jijoNF23'
     QINIU_ACCESS_KEY = '2SDKEG3KlbfHAHhT_Ajj5UyZY_mgNo1HZS-2yiJM'
     QINIU_SECRET_KEY = 'sewuf9u7Gq_s8GvBpZld0x_y5VDZwzHp4awJxSS9'
@@ -9,23 +10,16 @@ class Config(object):
 class DevelopmentConfig(Config):
     DEBUG = True
 
-    REDIS_HOST = 'localhost'
-    REDIS_PORT = 6379
-    REDIS_DB = 1
-    REDIS_PASSWORD = ''
-
-    SQLALCHEMY_DATABASE_URI = "mysql://root:cliff522..@localhost/api?charset=utf8"
+    REDIS_URL = "redis://secret_password:@localhost:6379/0"
+    SQLALCHEMY_DATABASE_URI = "mysql://itxiadb:secret_password@localhost/apidb?charset=utf8"
 
 
 class ProductionConfig(Config):
     DEBUG = False
+    
+    REDIS_URL = "redis://secret_password:@localhost:6379/0"
+    SQLALCHEMY_DATABASE_URI = "mysql://itxiadb:secret_password@localhost/apidb?charset=utf8"
 
-    REDIS_HOST = 'server-ip'
-    REDIS_PORT = 6379
-    REDIS_DB = 1
-    REDIS_PASSWORD = ''
-
-    SQLALCHEMY_DATABASE_URI = "mysql://root:cliff522..@localhost/api?charset=utf8"
 
 config = {
     'development': DevelopmentConfig,

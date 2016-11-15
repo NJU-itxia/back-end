@@ -1,7 +1,7 @@
 # coding:utf-8
 from flask import request, jsonify, g, current_app
 from app.model import Client, Server
-from .. import db
+from .. import db, redis
 import uuid
 
 from . import api
@@ -13,12 +13,12 @@ def before_request():
     role = request.headers.get('role')
     print request.endpoint
     if role == 'server':
-        username = current_app.redis.get('token:%s' % token)
+        username = redis.get('token:%s' % token)
         if username:
             g.current_server = Server.query.filter_by(username=username).first()
             g.token = token
     else:
-        phone_number = current_app.redis.get('token:%s' % token)
+        phone_number = redis.get('token:%s' % token)
         if phone_number:
             g.current_client = Client.query.filter_by(phone_number=phone_number).first()
             g.token = token

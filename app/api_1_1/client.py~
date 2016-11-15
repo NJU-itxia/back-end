@@ -1,7 +1,7 @@
 # coding:utf-8
 from flask import request, jsonify, g, render_template, redirect, url_for, current_app, json
 from app.model import Client, Form
-from .. import db
+from .. import db, redis
 import hashlib
 import time
 import random
