@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *.py[cod]~
+*.txt~
 *$py.class
 
 # C extensions
