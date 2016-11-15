@@ -241,9 +241,26 @@ def get_forms():
         })
         
 
-@api.route('/forms/<int:id>', methods=['GET'])
+@api.route('client/forms/<int:id>', methods=['GET'])
 @login_check
-def get_form():
-    form = Form.query.get(id)
-    return jsonify(form.to_json())
+def get_form(id):
+    form = Form.query.get_or_404(id)
+    if g.current_client != form.post_client 
+        return jsonify({'code': 0, 'message': '沒有权限'})
+    return jsonify({'code': 1, 'forms': form.to_json()})
     
+
+@api.route('/client/forms/<int:id>/edit', methods=['PUT'])
+@login_check
+def edit_form(id):
+    form = Form.query.get_or_404(id)
+    if g.current_client != form.post_client 
+        return jsonify({'code': 0, 'message': '沒有权限'})
+    form.campus = request.get_json().get('campus')
+    form.machine_model = request.get_json().get('machine_model')
+    form.OS = request.get_json().get('OS')
+    form.description = request.get_json().get('description')
+    form.pictures = request.get_json().get('pictures')
+    db.session.add(form)
+    db.session.commit(form)
+    return jsonify({'code': 1, 'message': '修改成功'})    

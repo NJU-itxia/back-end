@@ -150,29 +150,38 @@ class API_1_1(object):
         response_data = json.loads(response.content)
         print json.dumps(response_data, ensure_ascii=False, indent=4)
         return response_data
+        
+    def get_form(self, id, path='/client/forms'):
+        self.headers = {'token': self.token}
+        payload = {}
+        response = requests.get(url=self.base_url + path + '/' + str(id), params=payload, headers=self.headers)
+        response_data = json.loads(response.content)
+        print json.dumps(response_data, ensure_ascii=False, indent=4)
+        return response_data
+        
 
 if __name__ == '__main__':
     api = API_1_1()
     
-    //测试用户注册
+    #测试用户注册
 #    api.register_step_1('15850551102')
 #    validate_number = input("Please input the validate_number in message:\n")
 #    api.register_step_2('15850551102', str(validate_number))
 #    api.register_step_3('15850551102', '1234567', '1234567')
 #    api.register_step_4('15850551102', '2214102@qq.com')
 
-    //测试登录已注册用户
+    #测试登录已注册用户
     api.login('15850551103', '123456')
 
-    //测试提交表单，含图片
+    #测试提交表单，含图片
 #    api.post_form('xianlin', 'mac', 'win', 'sjfjjsklj',['1.png', '2.png'])
 #    api.client()
 
-    //测试用户查看自己的所有表单
-    api.get_forms()
-    
+    #测试用户查看自己的所有表单
+    #api.get_forms()
+    api.get_form(1)
     #api.get_qiniu_token()
     #api.set_head_picture()
     
-    //用户退出登录
+    #用户退出登录
     api.logout()
