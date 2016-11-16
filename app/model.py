@@ -15,6 +15,27 @@ class Server(db.Model):
     avatar_picture = db.Column('avatar_picture', db.String(120), default='')
     register_time = db.Column('register_time', db.DateTime, index=True, default=datetime.now)
     handle_forms = db.relationship('Form', backref='handle_server', lazy='dynamic', uselist=True)
+    
+    
+    @staticmethod
+    def generate_fake(count=100):
+        from sqlalchemy.exc import IntegrityError
+        from random import seed
+        import forgery_py
+        
+        seed()
+        for i in range(count):
+            s = Server(email=forgery_py.internet.email_address(),
+                     password=forgery_py.lorem_ipsum.word(),
+                     campus=['gulou', 'xianlin'][random.randint(0,1)],
+                     username=forgery_py.lorem_ipsum.word(),
+                     register_time=forgery_py.date.date(True))
+            db.session.add(s)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback() 
+    
 
 class Form(db.Model):
     __tablename__ = 'form'
@@ -43,6 +64,18 @@ class Form(db.Model):
         self.picture_content = ', '.join(urls)
     
     
+    @hybrid_property
+    def state(self):
+        if not self.handle_server:
+            return 'waiting'
+        return self.state
+
+
+    @state.setter
+    def state(self, working_done):
+        self.status = working_done
+    
+    
     @staticmethod
     def generate_fake(count=100):
         from random import seed, randint
@@ -52,23 +85,32 @@ class Form(db.Model):
         client_count = Client.query.count()
         for i in range(count):
             c = Client.query.offset(randint(0, client_count - 1)).first()
+            s = Server.query.offset(randint(0, client_count - 1)).first()
             f = Form(description=forgery_py.lorem_ipsum.words(10),
                      post_time=forgery_py.date.date(True),
                      campus=['gulou', 'xianlin'][random.randint(0,1)],
                      #status=['waiting', 'working', 'done'][random.randint(0,2)],
                      machine_model=forgery_py.lorem_ipsum.word(),
                      OS=forgery_py.lorem_ipsum.word(),
-                     post_client=c)
+                     post_client=c,
+                     handle_server=s)
 
             db.session.add(f)
             db.session.commit()  
 
         
     def to_json(self):
+        handle_server_username = None
+        post_client_phone_number = None
+        if self.post_client:
+            post_client_phone_number = self.post_client.phone_number
+        if self.handle_server:
+            handle_server_username = self.handle_server.username
+            
         json_post = {
             'url': url_for('api1_1.get_form', id=self.id, _external=True),
-            'post_client': self.post_client_id,
-            'handle_server': self.handle_server_id,
+            'post_client_phone_number': post_client_phone_number,
+            'handle_server_username': handle_server_username,
             'campus': self.campus,
             'machine_model': self.machine_model,
             'OS': self.OS,
@@ -90,6 +132,8 @@ class Client(db.Model):
     avatar_picture = db.Column('avatar_picture', db.String(120), default='')
     register_time = db.Column('register_time', db.DateTime, index=True, default=datetime.now)
     post_forms = db.relationship('Form', backref='post_client', lazy='dynamic', uselist=True)
+    
+    
     @staticmethod
     def generate_fake(count=100):
         from sqlalchemy.exc import IntegrityError

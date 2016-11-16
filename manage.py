@@ -14,6 +14,7 @@ def make_shell_context():
 @manager.command    
 def testdb():
     Client.generate_fake(10) #构造虚拟用户
+    Server.generate_fake(10)
     Form.generate_fake(10) #构造虚拟订单
 #    client_1 = Client(phone_number='15850551103', password='123456', email='221410232@qq.com');
 #    client_2 = Client(phone_number='15850123187', password='234786', email='2364726346@qq.com');
