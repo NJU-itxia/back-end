@@ -2,7 +2,7 @@ from datetime import datetime
 from . import db
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from flask import url_for
-
+import random
 
 class Server(db.Model):
     __tablename__ = 'server'
@@ -14,7 +14,7 @@ class Server(db.Model):
     campus = db.Column('campus', db.String(10), index=True, nullable=False)
     avatar_picture = db.Column('avatar_picture', db.String(120), default='')
     register_time = db.Column('register_time', db.DateTime, index=True, default=datetime.now)
-    
+    handle_forms = db.relationship('Form', backref='handle_server', lazy='dynamic', uselist=True)
 
 class Form(db.Model):
     __tablename__ = 'form'
@@ -28,9 +28,8 @@ class Form(db.Model):
     description = db.Column('description', db.String(240), nullable=False)
     picture_content = db.Column('picture_content', db.String(900))
     handle_server_id = db.Column('handle_server_id', db.Integer, db.ForeignKey('server.id'))
-    handle_server = db.relationship('Server', backref='handle_forms', lazy='dynamic', uselist=True)
     post_client_id = db.Column('post_client_id', db.Integer, db.ForeignKey('client.id'))
-    post_client = db.relationship('Client', backref='post_forms', lazy='dynamic', uselist=True)
+    
     
     @hybrid_property
     def pictures(self):
@@ -44,6 +43,27 @@ class Form(db.Model):
         self.picture_content = ', '.join(urls)
     
     
+    @staticmethod
+    def generate_fake(count=100):
+        from random import seed, randint
+        import forgery_py
+
+        seed()
+        client_count = Client.query.count()
+        for i in range(count):
+            c = Client.query.offset(randint(0, client_count - 1)).first()
+            f = Form(description=forgery_py.lorem_ipsum.words(10),
+                     post_time=forgery_py.date.date(True),
+                     campus=['gulou', 'xianlin'][random.randint(0,1)],
+                     #status=['waiting', 'working', 'done'][random.randint(0,2)],
+                     machine_model=forgery_py.lorem_ipsum.word(),
+                     OS=forgery_py.lorem_ipsum.word(),
+                     post_client=c)
+
+            db.session.add(f)
+            db.session.commit()  
+
+        
     def to_json(self):
         json_post = {
             'url': url_for('api1_1.get_form', id=self.id, _external=True),
@@ -69,4 +89,27 @@ class Client(db.Model):
     email = db.Column('email', db.String(64), index=True, unique=True)
     avatar_picture = db.Column('avatar_picture', db.String(120), default='')
     register_time = db.Column('register_time', db.DateTime, index=True, default=datetime.now)
+    post_forms = db.relationship('Form', backref='post_client', lazy='dynamic', uselist=True)
+    @staticmethod
+    def generate_fake(count=100):
+        from sqlalchemy.exc import IntegrityError
+        from random import seed
+        import forgery_py
+        
+        seed()
+        for i in range(count):
+            c = Client(email=forgery_py.internet.email_address(),
+                     password=forgery_py.lorem_ipsum.word(),
+                     phone_number=forgery_py.address.phone(),
+                     register_time=forgery_py.date.date(True))
+            db.session.add(c)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback() 
+    
+    
+    @staticmethod
+    def get_item(id):
+        return Client.query.get(id)
     
