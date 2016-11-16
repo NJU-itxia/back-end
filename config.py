@@ -10,14 +10,14 @@ class Config(object):
 class DevelopmentConfig(Config):
     DEBUG = True
 
-    REDIS_URL = "redis://secret_password:@localhost:6379/0"
+    REDIS_URL = "redis://:secret_password@localhost:6379/0"
     SQLALCHEMY_DATABASE_URI = "mysql://itxiadb:secret_password@localhost/apidb?charset=utf8"
 
 
 class ProductionConfig(Config):
     DEBUG = False
     
-    REDIS_URL = "redis://secret_password:@localhost:6379/0"
+    REDIS_URL = "redis://:secret_password@localhost:6379/0"
     SQLALCHEMY_DATABASE_URI = "mysql://itxiadb:secret_password@localhost/apidb?charset=utf8"
 
 
