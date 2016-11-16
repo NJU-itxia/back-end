@@ -241,11 +241,11 @@ def get_forms():
         })
         
 
-@api.route('client/forms/<int:id>', methods=['GET'])
+@api.route('/client/forms/<int:id>', methods=['GET'])
 @login_check
 def get_form(id):
     form = Form.query.get_or_404(id)
-    if g.current_client != form.post_client: 
+    if g.current_client.id != form.post_client_id: 
         return jsonify({'code': 0, 'message': '沒有权限'})
     return jsonify({'code': 1, 'forms': form.to_json()})
     
@@ -254,7 +254,7 @@ def get_form(id):
 @login_check
 def edit_form(id):
     form = Form.query.get_or_404(id)
-    if g.current_client != form.post_client: 
+    if g.current_client.id != form.post_client_id: 
         return jsonify({'code': 0, 'message': '沒有权限'})
     form.campus = request.get_json().get('campus')
     form.machine_model = request.get_json().get('machine_model')
